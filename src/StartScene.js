@@ -22,10 +22,12 @@ var StartLayer = cc.Layer.extend({
 
         //add start menu
         var startItem = new cc.MenuItemImage(
-            res.Monster1_png,
-            res.Monster2_png,
+            res.Start_png,
+            res.Start_png,
             function () {
                 cc.log("Menu is clicked!");
+                cc.director.runScene( new PlayScene() );
+                //cc.director用来获取导演单例实体，cc.TransitionPageTurn创建了一个翻页效果的场景切换动画，当然你也可以不使用转场动画。直接传入new SecondScene()
             }, this);
         startItem.attr({
             x: size.width/2,
