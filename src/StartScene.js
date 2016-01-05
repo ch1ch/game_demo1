@@ -22,8 +22,8 @@ var StartLayer = cc.Layer.extend({
 
         //add start menu
         var startItem = new cc.MenuItemImage(
-            res.Start_png,
-            res.Start_png,
+            res.Monster1_png,
+            res.Monster2_png,
             function () {
                 cc.log("Menu is clicked!");
             }, this);
