@@ -4,6 +4,12 @@
 var PlayLayer = cc.Layer.extend({
     bgSprite:null,
     SushiSprites:null,
+
+    scoreLabel:null,
+    score:0,
+    timeoutLabel:null,
+    timeout:60,
+
     ctor:function () {
         this._super();
         this.SushiSprites = [];
@@ -20,11 +26,27 @@ var PlayLayer = cc.Layer.extend({
         });
         this.addChild(this.bgSprite, 0);
 
-        //this.addSushi();
 
+        this.scoreLabel = new cc.LabelTTF("score:0", "Arial", 20);
+        this.scoreLabel.attr({
+            x:size.width / 2 + 100,
+            y:size.height - 20
+        });
+        this.addChild(this.scoreLabel, 5);
+
+        // timeout 60
+        this.timeoutLabel = cc.LabelTTF.create("" + this.timeout, "Arial", 30);
+        this.timeoutLabel.x = 20;
+        this.timeoutLabel.y = size.height - 20;
+        this.addChild(this.timeoutLabel, 5);
+
+        cc.spriteFrameCache.addSpriteFrames(res.Monster1all_plist);
+        this.schedule(this.timer,1,this.timeout,1);
         //this.Tuoluo();
 
-        this.schedule(this.update,2.5,16*1024,1);
+
+
+        this.schedule(this.update,0.5,16*1024,1);
         //schedule(callback_fn, interval, repeat, delay)
         //callback_fn：调用的方法名
         //interval：间隔多久再进行调用
@@ -39,14 +61,62 @@ var PlayLayer = cc.Layer.extend({
         this.removeSushi();
     },
 
+    addScore:function(){
+        this.score +=1;
+        this.scoreLabel.setString("score:" + this.score);
+    },
+
+    timer : function() {
+
+        if (this.timeout == 0) {
+            //cc.log('游戏结束');
+            var gameOver = new cc.LayerColor(cc.color(225,225,225,100));
+            var size = cc.winSize;
+            var titleLabel = new cc.LabelTTF("Game Over", "Arial", 38);
+            titleLabel.attr({
+                x:size.width / 2 ,
+                y:size.height / 2
+            });
+            gameOver.addChild(titleLabel, 5);
+            var TryAgainItem = new cc.MenuItemFont(
+                "Try Again",
+                function () {
+                    cc.log("Menu is clicked!");
+                    var transition= cc.TransitionFade(1, new PlayScene(),cc.color(255,255,255,255));
+                    cc.director.runScene(transition);
+                }, this);
+            TryAgainItem.attr({
+                x: size.width/2,
+                y: size.height / 2 - 60,
+                anchorX: 0.5,
+                anchorY: 0.5
+            });
+
+            var menu = new cc.Menu(TryAgainItem);
+            menu.x = 0;
+            menu.y = 0;
+            gameOver.addChild(menu, 1);
+            this.getParent().addChild(gameOver);
+
+            this.unschedule(this.update);
+            this.unschedule(this.timer);
+            return;
+        }
+
+        this.timeout -=1;
+        this.timeoutLabel.setString("" + this.timeout);
+
+    },
+
 
     addSushi : function() {
         var randomMon=cc.random0To1();
-        if(randomMon>0.5){
-            var sushi = new cc.Sprite(res.Monster1_png);
-        }else{
-            var sushi = new cc.Sprite(res.Monster2_png);
-        }
+        //if(randomMon>0.5){
+        //    var sushi = new SushiSprite(res.Monster1_png);
+        //}else{
+        //    var sushi = new SushiSprite(res.Monster2_png);
+        //}
+        var sushi = new SushiSprite(res.Monster1_png);
         var size = cc.winSize;
 
         //var x = sushi.width/2+size.width/2*cc.random0To1();
@@ -57,7 +127,7 @@ var PlayLayer = cc.Layer.extend({
         });
         this.addChild(sushi,5);
 
-        var dorpAction = cc.MoveTo.create(2, cc.p(sushi.x,-sushi.height));
+        var dorpAction = cc.MoveTo.create(1.0, cc.p(sushi.x,-sushi.height));
         sushi.runAction(dorpAction);
         this.SushiSprites.push(sushi);
     },
@@ -99,7 +169,6 @@ var PlayLayer = cc.Layer.extend({
                 target.prevY = y;
                 target.sprite.x = x;
                 target.sprite.y = y ;
-
             }
         }, this);
 

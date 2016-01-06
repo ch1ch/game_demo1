@@ -8,6 +8,8 @@ var res = {
     Monster1_png : "res/monster1.png",
     Monster2_png : "res/monster2.png",
     Monster3_png : "res/monster3.png",
+    Monster1all_plist : "res/monster1_all.plist",
+    Monster1all_png : "res/monster1_all.png"
 };
 
 var g_resources = [];

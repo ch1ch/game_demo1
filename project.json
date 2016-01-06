@@ -15,6 +15,7 @@
         "src/resource.js",
         "src/app.js",
         "src/StartScene.js",
-        "src/PlayScene.js"
+        "src/PlayScene.js",
+        "src/SushiSprite.js"
     ]
 }
