@@ -2,11 +2,11 @@
   <library name="cocos" type="javaScript">
     <properties>
       <sourceFilesUrls>
-        <item url="file://$USER_HOME$/Downloads/cocos2d-x-3.9" />
+        <item url="file://H:/cocos2d-x-3.9" />
       </sourceFilesUrls>
     </properties>
     <CLASSES>
-      <root url="file://$USER_HOME$/Downloads/cocos2d-x-3.9" />
+      <root url="file://H:/cocos2d-x-3.9" />
     </CLASSES>
     <SOURCES />
   </library>

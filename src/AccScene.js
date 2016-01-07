@@ -1,13 +1,20 @@
 /**
+ * Created by fu on 16-1-7.
+ */
+/**
  * Created by fu on 16/1/5.
  */
 var PlayLayer = cc.Layer.extend({
     bgSprite:null,
     SushiSprites:null,
     scoreLabel:null,
+    scoreLabel2:null,
     score:0,
     timeoutLabel:null,
-    timeout:60,
+    timeout:6000,
+    prevX:0,
+    prevY:0,
+    prevZ:0,
 
     ctor:function () {
         this._super();
@@ -26,12 +33,19 @@ var PlayLayer = cc.Layer.extend({
         this.addChild(this.bgSprite, 0);
 
 
-        this.scoreLabel = new cc.LabelTTF("score:0", "Arial", 20);
+        this.scoreLabel = new cc.LabelTTF("score:0", "Arial", 30);
         this.scoreLabel.attr({
             x:size.width / 2 + 100,
             y:size.height - 20
         });
         this.addChild(this.scoreLabel, 5);
+
+        this.scoreLabel2 = new cc.LabelTTF("score:0", "Arial", 30);
+        this.scoreLabel2.attr({
+            x:size.width / 2 + 100,
+            y:size.height - 80
+        });
+        this.addChild(this.scoreLabel2, 5);
 
         // timeout 60
         this.timeoutLabel = cc.LabelTTF.create("" + this.timeout, "Arial", 30);
@@ -41,12 +55,14 @@ var PlayLayer = cc.Layer.extend({
 
         cc.spriteFrameCache.addSpriteFrames(res.Monster1all_plist);
         this.schedule(this.timer,1,this.timeout,1);
-        //this.Tuoluo();
+
+
+        this.Tuoluo();
 
 
 
 //        this.schedule(this.update,0.5,16*1024,1);
-        this.schedule(this.accupdate,0.5,16*1024,1);
+        this.schedule(this.accupdate,1,16*1024,1);
         //schedule(callback_fn, interval, repeat, delay)
         //callback_fn：调用的方法名
         //interval：间隔多久再进行调用
@@ -57,22 +73,82 @@ var PlayLayer = cc.Layer.extend({
     },
 
     accupdate : function() {
-        this.Tuoluo();
+
     },
 
-    update : function() {
-        this.addSushi();
-        this.removeSushi();
-    },
-
-    addScore:function(){
-        this.score +=1;
-        this.scoreLabel.setString("score:" + this.score);
-    },
-
-   ShowAcc:function(str){
+    ShowAcc:function(str){
         this.score +=1;
         this.scoreLabel.setString("score:" + str);
+    },
+
+    Tuoluo:function(){
+        cc.inputManager.setAccelerometerInterval(1/10);
+        cc.inputManager.setAccelerometerEnabled(true);
+        cc.eventManager.addListener({
+            event: cc.EventListener.ACCELERATION,
+            callback: function(accelEvent, event){
+                var target = event.getCurrentTarget();
+                cc.log('Accel x: '+ accelEvent.x + ' y:' + accelEvent.y + ' z:' + accelEvent.z + ' time:' + accelEvent.timestamp );
+//                alert('Accel x: '+ accelEvent.x + ' y:' + accelEvent.y + ' z:' + accelEvent.z + ' time:' + accelEvent.timestamp );
+//                cc.log(this);
+//                target.ShowAcc(accelEvent.x);
+                x = accelEvent.x;
+                y = accelEvent.y;
+                z = accelEvent.z;
+
+                var bgx =target.bgSprite.x;
+                var bgy =target.bgSprite.y;
+//                cc.log(bgLocation);
+
+                if(target.prevX-x>0.02 ||target.prevX-x<-0.02){
+                    target.bgSprite.attr({
+                        x: bgx+cc.winSize.width*(( target.prevX-x).toFixed(2)),
+                        y: bgy,
+                    });
+                }
+
+                if(target.prevZ-z>0.02 ||target.prevZ-z<-0.02){
+                    target.bgSprite.attr({
+                        y: bgy+cc.winSize.width*(( target.prevZ-z).toFixed(2))
+                    });
+                }
+
+
+                target.scoreLabel2.setString("x++:" +((target.prevX).toFixed(2))+"  new x:"+((x).toFixed(2))+"  the :"+((x - target.prevX).toFixed(2)));
+
+                target.ShowAcc( target.bgSprite.x);
+
+                if(x - target.prevX>0.2){
+
+                    console.log("x轴加速计");
+                }
+                if(y - target.prevY>0.4){
+                    console.log("y轴加速计");
+                }
+                if(z - target.prevZ>0.6){
+                    console.log("z轴加速计");
+                }
+                target.prevX = x;
+                target.prevY = y;
+                target.prevZ = z;
+//
+//                var w = cc.winSize.width;
+//                var h =  cc.winSize.height;
+//
+//                var x = w * accelEvent.x + w/2;
+//                var y = h * accelEvent.y + h/2;
+//
+//                // Low pass filter
+//                x = x*0.2 + target.prevX*0.8;
+//                y = y*0.2 + target.prevY*0.8;
+//
+//                target.prevX = x;
+//                target.prevY = y;
+//                target.sprite.x = x;
+//                target.sprite.y = y ;
+            }
+        }, this);
+
     },
 
     timer : function() {
@@ -155,58 +231,14 @@ var PlayLayer = cc.Layer.extend({
         }
     },
 
-    Tuoluo:function(){
-        cc.inputManager.setAccelerometerInterval(1/30);
-        cc.inputManager.setAccelerometerEnabled(true);
-        cc.eventManager.addListener({
-            event: cc.EventListener.ACCELERATION,
-            callback: function(accelEvent, event){
-                var target = event.getCurrentTarget();
-                cc.log('Accel x: '+ accelEvent.x + ' y:' + accelEvent.y + ' z:' + accelEvent.z + ' time:' + accelEvent.timestamp );
-//                alert('Accel x: '+ accelEvent.x + ' y:' + accelEvent.y + ' z:' + accelEvent.z + ' time:' + accelEvent.timestamp );
 
-                this.ShowAcc(accelEvent.x);
-                x = accelEvent.x;
-                y = accelEvent.y;
-                z = accelEvent.z;
-
-                if(x - target.prevX>0.2){
-                    console.log("x轴加速计");
-                }
-                if(y - target.prevY>0.4){
-                    console.log("y轴加速计");
-                }
-                if(z - target.prevZ>0.6){
-                    console.log("z轴加速计");
-                }
-                target.prevX = x;
-                target.prevY = y;
-                target.prevZ = z;
-
-                var w = winSize.width;
-                var h = winSize.height;
-
-                var x = w * accelEvent.x + w/2;
-                var y = h * accelEvent.y + h/2;
-
-                // Low pass filter
-                x = x*0.2 + target.prevX*0.8;
-                y = y*0.2 + target.prevY*0.8;
-
-                target.prevX = x;
-                target.prevY = y;
-                target.sprite.x = x;
-                target.sprite.y = y ;
-            }
-        }, this);
-
-    }
 });
-
 var PlayScene = cc.Scene.extend({
     onEnter:function () {
         this._super();
         var layer = new PlayLayer();
         this.addChild(layer);
     }
+
+
 });
