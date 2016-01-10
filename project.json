@@ -16,6 +16,7 @@
         "src/app.js",
         "src/StartScene.js",
         "src/AccScene.js",
-        "src/SushiSprite.js"
+        "src/SushiSprite.js",
+        "src/AimSprite.js"
     ]
 }

@@ -9,6 +9,8 @@ var PlayLayer = cc.Layer.extend({
     SushiSprites:null,
     scoreLabel:null,
     scoreLabel2:null,
+    scoreLabel3:null,
+    scoreLabel4:null,
     score:0,
     timeoutLabel:null,
     timeout:6000,
@@ -27,7 +29,7 @@ var PlayLayer = cc.Layer.extend({
         this.bgSprite.attr({
             x: size.width / 2,
             y: size.height / 2,
-            scale: 1,
+            //scale: 1,
             rotation: 0 //旋转
         });
         this.addChild(this.bgSprite, 0);
@@ -40,12 +42,28 @@ var PlayLayer = cc.Layer.extend({
         });
         this.addChild(this.scoreLabel, 5);
 
+        //window.scoreLabel=this.scoreLabel;
+
         this.scoreLabel2 = new cc.LabelTTF("score:0", "Arial", 30);
         this.scoreLabel2.attr({
             x:size.width / 2 + 100,
             y:size.height - 80
         });
         this.addChild(this.scoreLabel2, 5);
+
+        this.scoreLabel3 = new cc.LabelTTF("score:0", "Arial", 30);
+        this.scoreLabel3.attr({
+            x:size.width / 2 + 100,
+            y:size.height - 120
+        });
+        this.addChild(this.scoreLabel3, 5);
+
+        this.scoreLabel4 = new cc.LabelTTF("score:0", "Arial", 30);
+        this.scoreLabel4.attr({
+            x:size.width / 2 + 100,
+            y:size.height - 160
+        });
+        this.addChild(this.scoreLabel4, 5);
 
         // timeout 60
         this.timeoutLabel = cc.LabelTTF.create("" + this.timeout, "Arial", 30);
@@ -59,10 +77,13 @@ var PlayLayer = cc.Layer.extend({
 
         this.Tuoluo();
 
+        this.addAim();
 
+
+        this.AddDeMon();
 
 //        this.schedule(this.update,0.5,16*1024,1);
-        this.schedule(this.accupdate,1,16*1024,1);
+        this.schedule(this.accupdate,3,16*1024,1);
         //schedule(callback_fn, interval, repeat, delay)
         //callback_fn：调用的方法名
         //interval：间隔多久再进行调用
@@ -81,14 +102,79 @@ var PlayLayer = cc.Layer.extend({
         this.scoreLabel.setString("score:" + str);
     },
 
+    AddDeMon:function(){
+        if (window.DeviceMotionEvent) {
+            //window.addEventListener('devicemotion', deviceMotionHandler, false);
+            window.addEventListener("deviceorientation", orientationHandler, false);
+        } else {
+            this.layer.scoreLabel.setString("This device doesn't support accelerators");
+            // This device doesn't support accelerators
+        }
+
+        function orientationHandler(event) {
+
+            var xx;
+
+            if(event.alpha){
+                xx=event.alpha.toFixed(2);
+                xx=xx>180?360-xx:(-xx);
+            }else{
+                xx=0;
+            }
+
+
+            this.layer.scoreLabel.setString("score:" +(this.layer.preX-xx ));
+
+            var bgx =this.layer.bgSprite.x;
+            var bgy =this.layer.bgSprite.y;
+
+            if(Math.abs(this.layer.preX - xx)>0.1) {
+                this.layer.bgSprite.attr({
+                    //x: bgx+cc.winSize.width*(( this.layer.prevY-yy).toFixed(2)),
+                    x: bgx + (( this.layer.preX - xx) * cc.winSize.width / 12),
+                    y: bgy
+                });
+            }
+
+            this.layer.preX=xx;
+
+
+            //document.getElementById("alpha").innerHTML = event.alpha;
+            //document.getElementById("beta").innerHTML = event.beta;
+            //document.getElementById("gamma").innerHTML = event.gamma;
+            //document.getElementById("heading").innerHTML = event.webkitCompassHeading;
+            //document.getElementById("accuracy").innerHTML = event.webkitCompassAccuracy;
+
+        }
+
+        function deviceMotionHandler(e) {
+            var acceleration = e.accelerationIncludingGravity;
+
+            var accelerationX = acceleration.x;
+            var accelerationY=acceleration.y;
+            var accelerationZ = acceleration.z;
+
+            if (e.rotationRate) {
+                var rotation = e.rotationRate;
+
+                cc.log(e);
+
+                //var rotationAlpha = rotation.alpha;
+                //var rotationBeta = rotation.beta;
+                //var rotationGamma = rotation.gamma;
+            }
+        }
+    },
+
     Tuoluo:function(){
-        cc.inputManager.setAccelerometerInterval(1/10);
+        cc.inputManager.setAccelerometerInterval(1/30);
         cc.inputManager.setAccelerometerEnabled(true);
         cc.eventManager.addListener({
             event: cc.EventListener.ACCELERATION,
             callback: function(accelEvent, event){
                 var target = event.getCurrentTarget();
-                cc.log('Accel x: '+ accelEvent.x + ' y:' + accelEvent.y + ' z:' + accelEvent.z + ' time:' + accelEvent.timestamp );
+                cc.log(accelEvent);
+                //cc.log('Accel x: '+ accelEvent.x + ' y:' + accelEvent.y + ' z:' + accelEvent.z + ' time:' + accelEvent.timestamp );
 //                alert('Accel x: '+ accelEvent.x + ' y:' + accelEvent.y + ' z:' + accelEvent.z + ' time:' + accelEvent.timestamp );
 //                cc.log(this);
 //                target.ShowAcc(accelEvent.x);
@@ -100,12 +186,12 @@ var PlayLayer = cc.Layer.extend({
                 var bgy =target.bgSprite.y;
 //                cc.log(bgLocation);
 
-                if(target.prevX-x>0.02 ||target.prevX-x<-0.02){
-                    target.bgSprite.attr({
-                        x: bgx+cc.winSize.width*(( target.prevX-x).toFixed(2)),
-                        y: bgy,
-                    });
-                }
+                //if(target.prevX-x>0.02 ||target.prevX-x<-0.02){
+                //    target.bgSprite.attr({
+                //        x: bgx+cc.winSize.width*(( target.prevX-x).toFixed(2)),
+                //        y: bgy,
+                //    });
+                //}
 
                 if(target.prevZ-z>0.02 ||target.prevZ-z<-0.02){
                     target.bgSprite.attr({
@@ -113,39 +199,30 @@ var PlayLayer = cc.Layer.extend({
                     });
                 }
 
+                //target.scoreLabel2.setString("x++:" +((target.prevX).toFixed(2))+"  new x:"+((x).toFixed(2))+"  the :"+((x - target.prevX).toFixed(2)));
 
-                target.scoreLabel2.setString("x++:" +((target.prevX).toFixed(2))+"  new x:"+((x).toFixed(2))+"  the :"+((x - target.prevX).toFixed(2)));
+                //target.scoreLabel3.setString("y++:" +((target.prevY).toFixed(2))+"  new y:"+((y).toFixed(2))+"  the :"+((y - target.prevY).toFixed(2)))
 
-                target.ShowAcc( target.bgSprite.x);
 
-                if(x - target.prevX>0.2){
+                target.scoreLabel4.setString("Z++:" +((target.prevZ).toFixed(2))+"  new z:"+((z).toFixed(2))+"  the :"+((z - target.prevZ).toFixed(2)));
 
-                    console.log("x轴加速计");
-                }
-                if(y - target.prevY>0.4){
-                    console.log("y轴加速计");
-                }
-                if(z - target.prevZ>0.6){
-                    console.log("z轴加速计");
-                }
-                target.prevX = x;
-                target.prevY = y;
+                //target.ShowAcc( target.bgSprite.x);
+
+                //if(x - target.prevX>0.2){
+                //
+                //    console.log("x轴加速计");
+                //}
+                //if(y - target.prevY>0.4){
+                //    console.log("y轴加速计");
+                //}
+                //if(z - target.prevZ>0.6){
+                //    console.log("z轴加速计");
+                //}
+                //target.prevX = x;
+                //target.prevY = y;
                 target.prevZ = z;
 //
-//                var w = cc.winSize.width;
-//                var h =  cc.winSize.height;
 //
-//                var x = w * accelEvent.x + w/2;
-//                var y = h * accelEvent.y + h/2;
-//
-//                // Low pass filter
-//                x = x*0.2 + target.prevX*0.8;
-//                y = y*0.2 + target.prevY*0.8;
-//
-//                target.prevX = x;
-//                target.prevY = y;
-//                target.sprite.x = x;
-//                target.sprite.y = y ;
             }
         }, this);
 
@@ -194,27 +271,19 @@ var PlayLayer = cc.Layer.extend({
     },
 
 
-    addSushi : function() {
-        var randomMon=cc.random0To1();
-        //if(randomMon>0.5){
-        //    var sushi = new SushiSprite(res.Monster1_png);
-        //}else{
-        //    var sushi = new SushiSprite(res.Monster2_png);
-        //}
-        var sushi = new SushiSprite(res.Monster1_png);
+    addAim : function() {
+
+        var aim = new AimSprite(res.Aim_png);
         var size = cc.winSize;
 
         //var x = sushi.width/2+size.width/2*cc.random0To1();
-        var x = size.width*cc.random0To1();
-        sushi.attr({
+        var x = size.width/2;
+        var y=size.height/2;
+        aim.attr({
             x: x,
-            y:size.height - 30
+            y:y
         });
-        this.addChild(sushi,5);
-
-        var dorpAction = cc.MoveTo.create(1.0, cc.p(sushi.x,-sushi.height));
-        sushi.runAction(dorpAction);
-        this.SushiSprites.push(sushi);
+        this.addChild(aim,5);
     },
 
     removeSushi : function() {
@@ -237,6 +306,7 @@ var PlayScene = cc.Scene.extend({
     onEnter:function () {
         this._super();
         var layer = new PlayLayer();
+        window.layer=layer;
         this.addChild(layer);
     }
 
