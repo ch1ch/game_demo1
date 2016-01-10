@@ -2,7 +2,7 @@ var res = {
     HelloWorld_png : "res/HelloWorld.png",
     BackGround_png : "res/bk.png",
     Start_png : "res/start1.png",
-    Map_png : "res/map0.jpg",
+    Map_png : "res/bk0.jpg",
     Center_png : "res/center.png",
     ArrowUp_png : "res/arrow_up.png",
     Monster1_png : "res/monster1.png",

@@ -17,7 +17,7 @@ var PlayLayer = cc.Layer.extend({
     prevX:0,
     prevY:0,
     prevZ:0,
-
+    oldtime:0,
     ctor:function () {
         this._super();
         this.SushiSprites = [];
@@ -29,7 +29,7 @@ var PlayLayer = cc.Layer.extend({
         this.bgSprite.attr({
             x: size.width / 2,
             y: size.height / 2,
-            //scale: 1,
+            scale: 1,
             rotation: 0 //旋转
         });
         this.addChild(this.bgSprite, 0);
@@ -75,7 +75,7 @@ var PlayLayer = cc.Layer.extend({
         this.schedule(this.timer,1,this.timeout,1);
 
 
-        this.Tuoluo();
+//        this.Tuoluo();
 
         this.addAim();
 
@@ -113,30 +113,75 @@ var PlayLayer = cc.Layer.extend({
 
         function orientationHandler(event) {
 
-            var xx;
+            var now=new Date();
+            this.layer.scoreLabel.setString("time:" +now.getTime());
+            if(now- this.layer.oldtime<100){
+                return;
+            }
+            var xx,yy;
+            var bgy =this.layer.bgSprite.y;
+            var bgx =this.layer.bgSprite.x;
 
             if(event.alpha){
                 xx=event.alpha.toFixed(2);
                 xx=xx>180?360-xx:(-xx);
+                yy=event.beta.toFixed(2);
+                yy=yy>180?360-yy:(-yy);
             }else{
                 xx=0;
             }
+            this.layer.scoreLabel2.setString("x:" +((this.layer.preX-xx ).toFixed(2))+" bgx=: "+bgx);
+            this.layer.scoreLabel3.setString("y:" +((this.layer.preY-yy ).toFixed(2))+" bgy=: "+bgy);
 
 
-            this.layer.scoreLabel.setString("score:" +(this.layer.preX-xx ));
 
-            var bgx =this.layer.bgSprite.x;
-            var bgy =this.layer.bgSprite.y;
 
-            if(Math.abs(this.layer.preX - xx)>0.1) {
+            if((bgx + (( this.layer.preX - xx) * cc.winSize.width / 12))>cc.winSize.width*2)
+            {
+              xx=this.layer.preX;
+            }
+
+
+            if((bgx + (( this.layer.preX - xx) * cc.winSize.width / 12))<cc.winSize.width*(-1.5))
+            {
+              xx=this.layer.preX;
+            }
+
+            if((bgy + (( this.layer.preY - yy) * cc.winSize.height / 5))>cc.winSize.height*1)
+            {
+              // yy=this.layer.preY;
+            }
+
+
+            if((bgy + (( this.layer.preY - yy) * cc.winSize.height / 5))<cc.winSize.height*(-1))
+            {
+              // yy=this.layer.preY;
+            }
+
+
+
+
+            if(Math.abs(this.layer.preX - xx)>0.001) {
                 this.layer.bgSprite.attr({
                     //x: bgx+cc.winSize.width*(( this.layer.prevY-yy).toFixed(2)),
                     x: bgx + (( this.layer.preX - xx) * cc.winSize.width / 12),
                     y: bgy
                 });
             }
+            bgx =this.layer.bgSprite.x;
+            if(Math.abs(this.layer.preY - yy)>0.001) {
+                this.layer.bgSprite.attr({
+                    //x: bgx+cc.winSize.width*(( this.layer.prevY-yy).toFixed(2)),
+                    x: bgx,
+                    y: bgy + ((yy- this.layer.preY) * cc.winSize.width / 5)
+                });
+            }
+
+
 
             this.layer.preX=xx;
+            this.layer.preY=yy;
+            this.layer.oldtime=now;
 
 
             //document.getElementById("alpha").innerHTML = event.alpha;
@@ -173,7 +218,7 @@ var PlayLayer = cc.Layer.extend({
             event: cc.EventListener.ACCELERATION,
             callback: function(accelEvent, event){
                 var target = event.getCurrentTarget();
-                cc.log(accelEvent);
+//                cc.log(accelEvent);
                 //cc.log('Accel x: '+ accelEvent.x + ' y:' + accelEvent.y + ' z:' + accelEvent.z + ' time:' + accelEvent.timestamp );
 //                alert('Accel x: '+ accelEvent.x + ' y:' + accelEvent.y + ' z:' + accelEvent.z + ' time:' + accelEvent.timestamp );
 //                cc.log(this);
@@ -204,7 +249,7 @@ var PlayLayer = cc.Layer.extend({
                 //target.scoreLabel3.setString("y++:" +((target.prevY).toFixed(2))+"  new y:"+((y).toFixed(2))+"  the :"+((y - target.prevY).toFixed(2)))
 
 
-                target.scoreLabel4.setString("Z++:" +((target.prevZ).toFixed(2))+"  new z:"+((z).toFixed(2))+"  the :"+((z - target.prevZ).toFixed(2)));
+                target.scoreLabel4.setString("y++:" +((target.prevZ).toFixed(2))+"  new z:"+((z).toFixed(2))+"  the :"+((z - target.prevZ).toFixed(2)));
 
                 //target.ShowAcc( target.bgSprite.x);
 
