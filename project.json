@@ -17,6 +17,7 @@
         "src/StartScene.js",
         "src/AccScene.js",
         "src/SushiSprite.js",
-        "src/AimSprite.js"
+        "src/AimSprite.js",
+        "src/MonSprite.js"
     ]
 }

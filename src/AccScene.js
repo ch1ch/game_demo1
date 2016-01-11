@@ -74,11 +74,11 @@ var PlayLayer = cc.Layer.extend({
         cc.spriteFrameCache.addSpriteFrames(res.Monster1all_plist);
         this.schedule(this.timer,1,this.timeout,1);
 
-
 //        this.Tuoluo();
 
         this.addAim();
 
+        this.addMonster();
 
         this.AddDeMon();
 
@@ -89,7 +89,6 @@ var PlayLayer = cc.Layer.extend({
         //interval：间隔多久再进行调用
         //repeat：重复的次数
         //delay：延迟多久再进行调用
-
         return true;
     },
 
@@ -112,7 +111,6 @@ var PlayLayer = cc.Layer.extend({
         }
 
         function orientationHandler(event) {
-
             var now=new Date();
             this.layer.scoreLabel.setString("time:" +now.getTime());
             if(now- this.layer.oldtime<100){
@@ -133,9 +131,6 @@ var PlayLayer = cc.Layer.extend({
             this.layer.scoreLabel2.setString("x:" +((this.layer.preX-xx ).toFixed(2))+" bgx=: "+bgx);
             this.layer.scoreLabel3.setString("y:" +((this.layer.preY-yy ).toFixed(2))+" bgy=: "+bgy);
 
-
-
-
             if((bgx + (( this.layer.preX - xx) * cc.winSize.width / 12))>cc.winSize.width*2)
             {
               xx=this.layer.preX;
@@ -152,14 +147,10 @@ var PlayLayer = cc.Layer.extend({
               // yy=this.layer.preY;
             }
 
-
             if((bgy + (( this.layer.preY - yy) * cc.winSize.height / 5))<cc.winSize.height*(-1))
             {
               // yy=this.layer.preY;
             }
-
-
-
 
             if(Math.abs(this.layer.preX - xx)>0.001) {
                 this.layer.bgSprite.attr({
@@ -177,18 +168,9 @@ var PlayLayer = cc.Layer.extend({
                 });
             }
 
-
-
             this.layer.preX=xx;
             this.layer.preY=yy;
             this.layer.oldtime=now;
-
-
-            //document.getElementById("alpha").innerHTML = event.alpha;
-            //document.getElementById("beta").innerHTML = event.beta;
-            //document.getElementById("gamma").innerHTML = event.gamma;
-            //document.getElementById("heading").innerHTML = event.webkitCompassHeading;
-            //document.getElementById("accuracy").innerHTML = event.webkitCompassAccuracy;
 
         }
 
@@ -253,24 +235,12 @@ var PlayLayer = cc.Layer.extend({
 
                 //target.ShowAcc( target.bgSprite.x);
 
-                //if(x - target.prevX>0.2){
-                //
-                //    console.log("x轴加速计");
-                //}
-                //if(y - target.prevY>0.4){
-                //    console.log("y轴加速计");
-                //}
-                //if(z - target.prevZ>0.6){
-                //    console.log("z轴加速计");
-                //}
                 //target.prevX = x;
                 //target.prevY = y;
                 target.prevZ = z;
-//
-//
+
             }
         }, this);
-
     },
 
     timer : function() {
@@ -312,9 +282,34 @@ var PlayLayer = cc.Layer.extend({
 
         this.timeout -=1;
         this.timeoutLabel.setString("" + this.timeout);
-
     },
 
+    addMonster:function(){
+        var randomMon=cc.random0To1();
+        //if(randomMon>0.5){
+        //    var sushi = new SushiSprite(res.Monster1_png);
+        //}else{
+        //    var sushi = new SushiSprite(res.Monster2_png);
+        //}
+        var mons = new MonSprite(res.Monster1_png);
+        var size = cc.winSize;
+
+        //var x = sushi.width/2+size.width/2*cc.random0To1();
+        var bgy =this.bgSprite.height;
+        var bgx =this.bgSprite.width;
+
+        var x = bgx*0.5;
+        var y=bgy*0.5;
+        //var y=(bgy*0.5-size.height*0.5)+
+        var y=bgy*0.5+bgy*randomMon*0.1;
+        mons.attr({
+            x: x,
+            y:y
+        })
+        cc.log(x+"  -- "+y);
+        cc.log(this);
+        this.bgSprite.addChild(mons,5);
+    },
 
     addAim : function() {
 
@@ -344,7 +339,6 @@ var PlayLayer = cc.Layer.extend({
             }
         }
     },
-
 
 });
 var PlayScene = cc.Scene.extend({
