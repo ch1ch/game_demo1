@@ -38,12 +38,16 @@ var MonSprite = cc.Sprite.extend({
                 var target = event.getCurrentTarget();
                 var size = cc.winSize;
                 var bgx=window.layer.bgSprite.x;
-                var bgy=window.layer.bgSprite.y;
+                 var bgy=window.layer.bgSprite.y;
                 var bgw=window.layer.bgSprite.width;
                 var bgh=window.layer.bgSprite.height;
-                pos.x=pos.x+(bgw*0.5-size.width*1)+bgx;
-                pos.y=pos.y+(bgh*0.5-size.height*1)+bgy;
-                //alert(target);
+                //pos.x=pos.x+(bgw*0.5-size.width*0.5)+bgx;
+                pos.x=bgw*0.5-(bgx)+pos.x;
+                var oldy=pos.y;
+                //pos.y=pos.y+(bgh*0.5-size.height*0.5)-bgy;
+                pos.y=bgh*0.5-(bgy-size.height*0.5)+pos.y-size.height*0.5;
+                //alert("bgx = "+bgx + " bgy = "+bgy);
+
                 //获取当前事件的接受者
                 if (cc.rectContainsPoint(target.getBoundingBox(), pos)) {
                     //判断当前的是否点击到了SushiSprite
@@ -72,7 +76,9 @@ var MonSprite = cc.Sprite.extend({
                     return true;
                 }else{
                     var temp=target.getBoundingBox();
-                    alert("xxxpos.x="+pos.x+",pos.y="+pos.y+"  tt== x "+temp.x+"  == y "+temp.y);
+                    var tempx=temp.x+temp.width;
+                    var tempy=temp.y+temp.height;
+                    alert("xxxpos.x="+pos.x+",pos.y="+pos.y+"  oldy= "+oldy+"  sprite x=  "+temp.x+"  == y "+temp.y);
                 }
                 return false;
             }

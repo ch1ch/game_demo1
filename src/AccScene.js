@@ -32,6 +32,7 @@ var PlayLayer = cc.Layer.extend({
             scale: 1,
             rotation: 0 //旋转
         });
+        //alert(this.bgSprite.y);
         this.addChild(this.bgSprite, 0);
 
 
@@ -131,13 +132,13 @@ var PlayLayer = cc.Layer.extend({
             this.layer.scoreLabel2.setString("x:" +((this.layer.preX-xx ).toFixed(2))+" bgx=: "+bgx);
             this.layer.scoreLabel3.setString("y:" +((this.layer.preY-yy ).toFixed(2))+" bgy=: "+bgy);
 
-            if((bgx + (( this.layer.preX - xx) * cc.winSize.width / 12))>cc.winSize.width*2)
+            if((bgx + (( this.layer.preX - xx) * cc.winSize.width / 16))>cc.winSize.width*2)
             {
               xx=this.layer.preX;
             }
 
 
-            if((bgx + (( this.layer.preX - xx) * cc.winSize.width / 12))<cc.winSize.width*(-1.5))
+            if((bgx + (( this.layer.preX - xx) * cc.winSize.width / 16))<cc.winSize.width*(-1.5))
             {
               xx=this.layer.preX;
             }
@@ -155,7 +156,7 @@ var PlayLayer = cc.Layer.extend({
             if(Math.abs(this.layer.preX - xx)>0.001) {
                 this.layer.bgSprite.attr({
                     //x: bgx+cc.winSize.width*(( this.layer.prevY-yy).toFixed(2)),
-                    x: bgx + (( this.layer.preX - xx) * cc.winSize.width / 12),
+                    x: bgx + (( this.layer.preX - xx) * cc.winSize.width / 16),
                     y: bgy
                 });
             }
@@ -285,7 +286,7 @@ var PlayLayer = cc.Layer.extend({
     },
 
     addMonster:function(){
-        var randomMon=cc.random0To1();
+        var randomMon=cc.random0To1()-0.5;
         //if(randomMon>0.5){
         //    var sushi = new SushiSprite(res.Monster1_png);
         //}else{
@@ -301,12 +302,13 @@ var PlayLayer = cc.Layer.extend({
         var x = bgx*0.5;
         var y=bgy*0.5;
         //var y=(bgy*0.5-size.height*0.5)+
-        var y=bgy*0.5+bgy*randomMon*0.1;
+        var y=bgy*0.5+bgy*randomMon;
         mons.attr({
             x: x,
             y:y
         })
         cc.log(x+"  -- "+y);
+        //alert(x+"  -- "+y);
         cc.log(this);
         this.bgSprite.addChild(mons,5);
     },

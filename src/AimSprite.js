@@ -7,7 +7,7 @@ var AimSprite = cc.Sprite.extend({
     onEnter:function () {
         cc.log("onEnter");
         this._super();
-        this.addTouchEventListenser();
+        //this.addTouchEventListenser();
         //表示对生成的消失动画增加一次引用,
         // 上面创建的disappearAction是自动释放的，我们需要为它增加一次引用，以避免它被回收
         //在我们不需要的时候对它执行release()方法,释放对它的引用。避免内存泄露。
