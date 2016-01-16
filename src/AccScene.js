@@ -75,15 +75,19 @@ var PlayLayer = cc.Layer.extend({
         cc.spriteFrameCache.addSpriteFrames(res.Monster1all_plist);
         this.schedule(this.timer,1,this.timeout,1);
 
-//        this.Tuoluo();
-
+        //中心准心
         this.addAim();
 
+        //增加怪物
         this.addMonster();
 
+        //屏幕箭头
+        this.addArrow();
+
+        //判断屏幕位移
         this.AddDeMon();
 
-//        this.schedule(this.update,0.5,16*1024,1);
+//       this.schedule(this.update,0.5,16*1024,1);
         this.schedule(this.accupdate,3,16*1024,1);
         //schedule(callback_fn, interval, repeat, delay)
         //callback_fn：调用的方法名
@@ -129,43 +133,46 @@ var PlayLayer = cc.Layer.extend({
             }else{
                 xx=0;
             }
+
+            var speed_x=20;
+            var speed_y=6;
+            //越大越移动幅度小
+
             this.layer.scoreLabel2.setString("x:" +((this.layer.preX-xx ).toFixed(2))+" bgx=: "+bgx);
             this.layer.scoreLabel3.setString("y:" +((this.layer.preY-yy ).toFixed(2))+" bgy=: "+bgy);
 
-            if((bgx + (( this.layer.preX - xx) * cc.winSize.width / 16))>cc.winSize.width*2)
+            if((bgx + (( this.layer.preX - xx) * cc.winSize.width / speed_x))>cc.winSize.width*2)
             {
               xx=this.layer.preX;
             }
 
 
-            if((bgx + (( this.layer.preX - xx) * cc.winSize.width / 16))<cc.winSize.width*(-1.5))
+            if((bgx + (( this.layer.preX - xx) * cc.winSize.width / speed_x))<cc.winSize.width*(-1.5))
             {
               xx=this.layer.preX;
             }
 
-            if((bgy + (( this.layer.preY - yy) * cc.winSize.height / 5))>cc.winSize.height*1)
+            if((bgy + (( this.layer.preY - yy) * cc.winSize.height / speed_y))>cc.winSize.height*1)
             {
               // yy=this.layer.preY;
             }
 
-            if((bgy + (( this.layer.preY - yy) * cc.winSize.height / 5))<cc.winSize.height*(-1))
+            if((bgy + (( this.layer.preY - yy) * cc.winSize.height / speed_y))<cc.winSize.height*(-1))
             {
               // yy=this.layer.preY;
             }
 
             if(Math.abs(this.layer.preX - xx)>0.001) {
                 this.layer.bgSprite.attr({
-                    //x: bgx+cc.winSize.width*(( this.layer.prevY-yy).toFixed(2)),
-                    x: bgx + (( this.layer.preX - xx) * cc.winSize.width / 16),
+                    x: bgx + (( this.layer.preX - xx) * cc.winSize.width / speed_x),
                     y: bgy
                 });
             }
             bgx =this.layer.bgSprite.x;
             if(Math.abs(this.layer.preY - yy)>0.001) {
                 this.layer.bgSprite.attr({
-                    //x: bgx+cc.winSize.width*(( this.layer.prevY-yy).toFixed(2)),
                     x: bgx,
-                    y: bgy + ((yy- this.layer.preY) * cc.winSize.width / 5)
+                    y: bgy + ((yy- this.layer.preY) * cc.winSize.width / speed_y)
                 });
             }
 
@@ -287,6 +294,7 @@ var PlayLayer = cc.Layer.extend({
 
     addMonster:function(){
         var randomMon=cc.random0To1()-0.5;
+        var randomx=cc.random0To1()-0.5;
         //if(randomMon>0.5){
         //    var sushi = new SushiSprite(res.Monster1_png);
         //}else{
@@ -300,18 +308,41 @@ var PlayLayer = cc.Layer.extend({
         var bgx =this.bgSprite.width;
 
         var x = bgx*0.5;
-        var y=bgy*0.5;
+        var y=bgy*0.5;  
         //var y=(bgy*0.5-size.height*0.5)+
+        var x=bgx*0.5+bgx*randomx;
         var y=bgy*0.5+bgy*randomMon;
+        //alert("x = "+x+" y = "+y);
         mons.attr({
             x: x,
             y:y
         })
-        cc.log(x+"  -- "+y);
+        //cc.log(x+"  -- "+y);
         //alert(x+"  -- "+y);
         cc.log(this);
-        this.bgSprite.addChild(mons,5);
+        this.bgSprite.addChild(mons,5,5);
     },
+
+    addArrow:function(){
+        var bgy =this.bgSprite.height;
+        var bgx =this.bgSprite.width;
+        var size = cc.winSize;
+        var mon=this.bgSprite.getChildByTag(5);
+        var monx=mon.x;
+        var mony=mon.y;
+
+
+        cc.log(monx);
+
+        //var x= 0,y=0;
+        //var arrow = new MonSprite(res.Monster1_png);
+        //arrow.attr({
+        //    x: x,
+        //    y:y
+        //})
+        //this.bgSprite.addChild(arrow,5);
+    },
+
 
     addAim : function() {
 
