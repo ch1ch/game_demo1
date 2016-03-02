@@ -316,31 +316,59 @@ var PlayLayer = cc.Layer.extend({
         mons.attr({
             x: x,
             y:y
-        })
+        });
         //cc.log(x+"  -- "+y);
         //alert(x+"  -- "+y);
-        cc.log(this);
+        //cc.log(this);
         this.bgSprite.addChild(mons,5,5);
     },
 
     addArrow:function(){
+        var Arrow =new cc.Sprite(res.Map_png);
         var bgy =this.bgSprite.height;
         var bgx =this.bgSprite.width;
         var size = cc.winSize;
         var mon=this.bgSprite.getChildByTag(5);
         var monx=mon.x;
         var mony=mon.y;
+        var xpointleft=bgx*0.5-size.width*0.5;
+        var xpointright=bgx-xpointleft;
+        var ypointup=bgy*0.5-size.height*0.5;
+        var ypointdown=bgy-ypointup;
+        cc.log(monx+"  -- "+mony);
 
+        if(monx<xpointleft){
+            if(mony<ypointup){
+                Arrow =new cc.Sprite(res.Arrow10_png);
+            }else if(mony>ypointdown){
+                Arrow =new cc.Sprite(res.Arrow7_png);
+            }else{
+                Arrow =new cc.Sprite(res.Arrow9_png);
+            }
+        }else if(monx>xpointright){
+            if(mony<ypointup){
+                Arrow =new cc.Sprite(res.Arrow1_png);
+            }else if(mony>ypointdown){
+                Arrow =new cc.Sprite(res.Arrow4_png);
+            }else{
+                Arrow =new cc.Sprite(res.Arrow3_png);
+            }
+        }else{
+            if(mony<ypointup){
+                Arrow =new cc.Sprite(res.Arrow0_png);
+            }else if(mony>ypointdown){
+                Arrow =new cc.Sprite(res.Arrow6_png);
+            }
+        };
+        var x = size.width/2;
+        var y=size.height/2;
+        Arrow.attr({
+            x: x,
+            y:y
+        });
+        cc.log(Arrow);
+        this.addChild(Arrow,15,15);
 
-        cc.log(monx);
-
-        //var x= 0,y=0;
-        //var arrow = new MonSprite(res.Monster1_png);
-        //arrow.attr({
-        //    x: x,
-        //    y:y
-        //})
-        //this.bgSprite.addChild(arrow,5);
     },
 
 
@@ -381,6 +409,4 @@ var PlayScene = cc.Scene.extend({
         window.layer=layer;
         this.addChild(layer);
     }
-
-
 });
